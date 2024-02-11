@@ -3,6 +3,7 @@ import random
 import os
 import shutil
 
+# basic
 
 url = "https://www.tiktok.com/"
 
@@ -20,6 +21,9 @@ def split_list(li, segments):
         segments_list.append(li[start:end])
         start = end
     return segments_list
+
+
+# search
 
 
 def get_users(segments):
@@ -86,9 +90,9 @@ class Video:
 
     def valid(self):
         if (
-            (self.likes / (self.hr_ago * 1000) > 0.7)
-            and (self.hr_ago < 20)
-            and (self.comments > 20)
+            (self.likes / (self.hr_ago * 1000) > 0.9)
+            and (self.hr_ago < 10)
+            and (self.comments > 40)
         ):
             return True
 
@@ -101,3 +105,22 @@ comments = "com.zhiliaoapp.musically:id/bpp"
 actual_comment = "com.zhiliaoapp.musically:id/bzg"
 add_comment = "com.zhiliaoapp.musically:id/bpu"
 send_comment = "com.zhiliaoapp.musically:id/brj"
+
+# likes
+
+
+def get_new_vids():
+    new_videos = []
+    with open("./etc/new_videos.txt", "r") as file:
+        lines = file.readlines()
+        for line in lines:
+            new_videos.append(line.replace("\n", ""))
+    return new_videos
+
+
+def get_cookies(like_browsers):
+    if os.path.exists("./etc/cookies/.DS_Store"):
+        os.remove("./etc/cookies/.DS_Store")
+    cookies_json = os.listdir("./etc/cookies")
+    random.shuffle(cookies_json)
+    return split_list(cookies_json, like_browsers)

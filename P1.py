@@ -11,6 +11,7 @@ import random
 import json
 import os
 import shutil
+from colorama import Fore, Style
 
 search_browsers = int(sys.argv[1])
 comments_on_vid = int(sys.argv[2])
@@ -29,14 +30,19 @@ async def get_vids():
 
     async with async_playwright() as p:
         mod.clean_firefox()
-        context = await p.firefox.launch_persistent_context(
-            user_data_dir="./firefox",
+        context = await p.firefox.launch(
             headless=True,
-            user_agent="Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1",
         )
+        # context = await p.firefox.launch_persistent_context(
+        #     user_data_dir="./firefox",
+        #     headless=False,
+        #     user_agent="Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1",
+        # )
 
         async def browser_l(segment):
-            page = await context.new_page()
+            page = await context.new_page(
+                user_agent="Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1"
+            )
             for user in segment:
                 if len(new_vids) < len(devices):
                     try:
@@ -145,7 +151,9 @@ async def emulator(index, vid):
 
 
 async def main():
+    print(f"{Fore.BLUE}\nget_vids() is running.. {datetime.now()}{Style.RESET_ALL}")
     await asyncio.gather(*[get_vids()])
+    print(f"{Fore.BLUE}\nemulator() is running.. {datetime.now()}{Style.RESET_ALL}")
     await asyncio.gather(*[emulator(index, vid) for index, vid in enumerate(new_vids)])
 
 

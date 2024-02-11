@@ -1,15 +1,15 @@
 #!/bin/bash
 
 while true; do
-    python3 a1.py 3 3 # a1.py {number of browsers open to search} {number of comments for video}
+    python3 P1.py 3 2
     if [ $? -ne 0 ]; then
-        echo "a1.py failed, restarting..."
+        echo "P1.py failed, restarting..."
         continue
     fi
 
-    python3 a2.py 
+    python3 P2.py 2
     if [ $? -ne 0 ]; then
-        echo "a2.py failed, restarting..."
+        echo "P2.py failed, restarting..."
         continue
     fi
     # break
