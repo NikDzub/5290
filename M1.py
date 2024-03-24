@@ -28,33 +28,49 @@ async def get_vids():
     global new_vids
 
     async with async_playwright() as p:
-        context = await p.firefox.launch(headless=True)
+        # context = await p.firefox.launch(
+        #     headless=False,
+        #     # proxy={
+        #     #     "server": "181.177.87.173:9291",
+        #     #     "username": "3jFvwU",
+        #     #     "password": "qF5DWZ",
+        #     # },
+        # )
+        mod.clean_firefox()
+        context = await p.firefox.launch_persistent_context(
+            user_data_dir="./firefox", headless=False
+        )
 
         async def browser_l(segment):
+
             page = await context.new_page(
-                user_agent="Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1"
+                # user_agent="Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1"
             )
+            await page.goto("https://www.tiktok.com/", wait_until="load")
+            await page.wait_for_timeout(546546456)
 
             for user in segment:
                 if len(new_vids) < n_new:
                     try:
-                        print(f"|", end="")
-
                         sys.stdout.flush()
                         async with page.expect_request(
                             "**/api/post/item_list/**",
                             timeout=10000,
                         ) as first:
+                            await page.wait_for_timeout(2000)
                             await page.goto(
-                                f"https://www.tiktok.com/@{user}", timeout=10000
+                                f"https://www.tiktok.com/@{user}",
+                                timeout=10000,
+                                wait_until="domcontentloaded",
                             )
 
+                        # await page.wait_for_timeout(134000)
                         first_request = await first.value
                         response = await first_request.response()
                         response_body = await response.body()
 
-                        if response_body.strip():
-
+                        if json.loads(response_body)["itemList"]:
+                            print(f"|", end="")
                             videos_json = json.loads(response_body)["itemList"]
                             current_timestamp = datetime.now().timestamp()
                             for vid in videos_json:
@@ -74,7 +90,7 @@ async def get_vids():
                                 if (
                                     vid.valid()
                                     and used == False
-                                    and len(new_vids) < n_new
+                                    # and len(new_vids) < n_new
                                 ):
                                     new_vids.append(vid.video_url())
                                     used_vids.append(vid.video_url())

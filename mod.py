@@ -40,7 +40,7 @@ def get_users(segments):
                 top_users.append(line.replace("\n", ""))
         random.shuffle(top_users)
 
-        top_users = top_users[:50]
+        top_users = top_users[:5]
         for top in top_users:
             username_list.insert(0, top)
         return split_list(username_list, segments)
@@ -69,6 +69,20 @@ def clean_firefox():
     context_dir = "./firefox"
     context_dir = os.path.join(os.getcwd(), context_dir)
     try:
+        shutil.rmtree(f"{context_dir}/sessionstore-backups")
+        os.remove(f"{context_dir}/sessionCheckpoints.json")
+        os.remove(f"{context_dir}/sessionstore.jsonlz4")
+    except Exception as error:
+        pass
+        # print(error)
+
+
+def clean_local_firefox():
+    context_dir = "/Users/ihpt/Library/Application Support/Firefox/Profiles/i8unqabt.default-nightly"
+    context_dir = os.path.join(os.getcwd(), context_dir)
+    try:
+        shutil.rmtree(f"{context_dir}/storage")
+        shutil.rmtree(f"{context_dir}/crashes")
         shutil.rmtree(f"{context_dir}/sessionstore-backups")
         os.remove(f"{context_dir}/sessionCheckpoints.json")
         os.remove(f"{context_dir}/sessionstore.jsonlz4")
@@ -111,9 +125,10 @@ class Video:
 
     def valid(self):
         if (
-            (self.likes / (self.hr_ago * 1000) > 0.7)
-            and (self.hr_ago < 6)
-            and (self.comments > 80)
+            (self.likes / (self.hr_ago * 1000) > 0.5)
+            and (self.hr_ago < 2)
+            and (self.comments > 90)
+            and (self.comments < 200)
         ):
             return True
 
@@ -121,37 +136,14 @@ class Video:
 # emu
 
 app_name = "com.zhiliaoapp.musically"
+# app_name = "com.zhiliaoapp.musically.go"
 lock = "com.android.systemui:id/lock_icon"
 
-# pause = "com.zhiliaoapp.musically:id/f5t"
-# comments = "com.zhiliaoapp.musically:id/bpp"
-# actual_comment = "com.zhiliaoapp.musically:id/bzg"
-# add_comment = "com.zhiliaoapp.musically:id/bpu"
-# send_comment = "com.zhiliaoapp.musically:id/brj"
 
-# pause = "com.zhiliaoapp.musically:id/f77"
-# comments = "com.zhiliaoapp.musically:id/bqf"
-# actual_comment = "com.zhiliaoapp.musically:id/c0c"
-# add_comment = "com.zhiliaoapp.musically:id/bqk"
-# send_comment = "com.zhiliaoapp.musically:id/bsb"
+pause = "com.zhiliaoapp.musically:id/arr"
+comments = "com.zhiliaoapp.musically:id/bw1"
+actual_comment = "com.zhiliaoapp.musically:id/c6c"
 
-pause = "com.zhiliaoapp.musically:id/aq5"
-comments = "com.zhiliaoapp.musically:id/btr"
-actual_comment = "com.zhiliaoapp.musically:id/c3t"
-add_comment = "com.zhiliaoapp.musically:id/btz"
-send_comment = "com.zhiliaoapp.musically:id/bvt"
-
-# pause = "com.zhiliaoapp.musically:id/fcn"
-# comments = "com.zhiliaoapp.musically:id/bua"
-# actual_comment = "com.zhiliaoapp.musically:id/c4k"
-# add_comment = "com.zhiliaoapp.musically:id/bui"
-# send_comment = "com.zhiliaoapp.musically:id/bwe"
-
-# pause = "com.zhiliaoapp.musically:id/fb6"
-# comments = "com.zhiliaoapp.musically:id/btr"
-# actual_comment = "com.zhiliaoapp.musically:id/c3t"
-# add_comment = "com.zhiliaoapp.musically:id/btz"
-# send_comment = "com.zhiliaoapp.musically:id/bvt"
 
 # likes
 

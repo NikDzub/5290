@@ -1,7 +1,7 @@
 #!/bin/bash
 
 while true; do
-    python3 M1.py 3 2 # python3 M1 (# brwsrs) (# new vids)
+    python3 M1.py 4 1 # python3 M1 (# brwsrs) (# new vids)
     if [ $? -ne 0 ]; then
         echo "M1.py failed, restarting..."
         continue

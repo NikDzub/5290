@@ -37,7 +37,14 @@ async def handle_vid(route: Route):
 async def browser_l(segment, segment_index):
 
     async with async_playwright() as p:
-        context = await p.firefox.launch(headless=False)
+        context = await p.firefox.launch(
+            headless=True,
+            # proxy={
+            #     "server": "181.177.87.173:9291",
+            #     "username": "3jFvwU",
+            #     "password": "qF5DWZ",
+            # },
+        )
         page = await context.new_page(reduced_motion="reduce")
 
         await page.route("**/*", handle_vid)

@@ -28,7 +28,7 @@ share_links = []
 
 async def go_to_comments(vid):
     d.open_url(f"https://www.tiktok.com/@ihptto")
-    d(text="Message").exists(timeout=10)
+    d(text="Follow").exists(timeout=10)
 
     d.open_url(vid)
 
@@ -52,20 +52,19 @@ async def comment(profile_index, profile_id):
             except Exception as error:
                 print(error)
 
-        # else:
-        #     await asyncio.sleep(2)
-        #     d(resourceId=mod.lock).exists(timeout=20)
-        #     d.press(62)
-        #     d.swipe_ext("up", scale=0.8)
+        else:
+            await asyncio.sleep(2)
+            d(resourceId=mod.lock).exists(timeout=20)
+            d.press(62)
+            d.swipe_ext("up", scale=0.8)
 
         random.shuffle(new_vids)
         for vid in new_vids:
             await go_to_comments(vid)
 
             comments_list = []
-            for i in range(1):
+            for i in range(3):
                 d.swipe_ext("up", scale=0.8)
-                # d.swipe_ext("up", box=(500, 100, 0, 1000))
 
             for com in d(resourceId=mod.actual_comment):
                 if com.get_text() not in comments_list:
@@ -76,8 +75,7 @@ async def comment(profile_index, profile_id):
                 if comment_index < n_comments:
                     d(textContains="Add comment...").click(10)
                     d(textContains="Add comment...").set_text(comment)
-                    d(descriptionContains="Post comment").click(10)
-                    # d(resourceId=mod.send_comment).click(10)
+                    d(resourceId=mod.send_comment).click(10)
                     print(f"{vid}")
 
                     await asyncio.sleep(1)

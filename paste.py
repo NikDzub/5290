@@ -18,6 +18,7 @@ async def paste():
         print(text)
 
         d(focused=True).set_text(text)
+
     except Exception as error:
         print(error)
 
