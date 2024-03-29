@@ -12,14 +12,14 @@ from colorama import Fore, Style
 
 n_new_videos = int(sys.argv[1])
 new_videos = []
+fam_users = mod.get_users(1)
 
 
 d1 = u2.connect("127.0.0.1:6555")
-d2 = u2.connect("127.0.0.1:6562")
 
 
-d2_users_output, exit_code = d2.shell("pm list users")
-d2_users = re.findall(r"UserInfo{(\d+):", d2_users_output)
+d1_users_output, exit_code = d1.shell("pm list users")
+d1_users = re.findall(r"UserInfo{(\d+):", d1_users_output)
 
 
 async def search():
@@ -58,7 +58,8 @@ async def search():
 
             # print(f"comments : {int(n_comments_filtered)}")
 
-            if int(n_comments_filtered) > 20:
+            # if int(n_comments_filtered) > 20 :
+            if "K" in n_comments_desc or "," in n_comments_desc:
 
                 # go2 video -----------------------------------------------------------------
 
@@ -156,41 +157,29 @@ async def search():
 
         except Exception as error:
             d1.app_stop(f"{mod.app_name}")
-            # d.shell(f"am force-stop {mod.app_name}")
             d1.open_url(f"https://www.tiktok.com/")
             print(error)
             pass
 
     d1.app_stop(f"{mod.app_name}")
-    # print(new_videos)
 
 
-async def like(id):
+async def like(user):
 
     print(
-        f"{Fore.LIGHTRED_EX}user {id} - {Fore.LIGHTBLACK_EX}{datetime.now().strftime(f'%H:%M:%S')}{Style.RESET_ALL}"
+        f"{Fore.LIGHTRED_EX}user {user} - {Fore.LIGHTBLACK_EX}{datetime.now().strftime(f'%H:%M:%S')}{Style.RESET_ALL}"
     )
 
-    if id == 0 or id == "0":
-
-        d2.app_start("com.github.uiautomator")
-        d2(resourceId="com.github.uiautomator:id/start_uiautomator").click()
-
     try:
-        d2.shell(f"am switch-user {id}")
-        await asyncio.sleep(2)
-
-        d2(resourceId="com.android.systemui:id/clock").exists(timeout=20)
-
-        d2.open_url(f"https://www.tiktok.com/@ihptto")
-        d2(text="Message").exists(timeout=10)
+        d1.open_url(f"https://www.tiktok.com/@ihptto")
+        d1(text="Message").exists(timeout=10)
 
         for video in new_videos:
-            d2.open_url(video)
-            d2(descriptionContains="Like or undo like").click(timeout=35)
+            d1.open_url(video)
+            d1(descriptionContains="Like or undo like").click(timeout=35)
             # print("like")
             await asyncio.sleep(1)
-            d2.app_stop(f"{mod.app_name}")
+            d1.app_stop(f"{mod.app_name}")
 
     except Exception as error:
         print(error)
@@ -198,9 +187,18 @@ async def like(id):
 
 
 async def main():
-    await search()
-    for id in d2_users:
-        await like(id)
+
+    for user in d1_users:
+
+        d1.shell(f"am switch-user {user}")
+        await asyncio.sleep(2)
+        d1(resourceId="com.android.systemui:id/clock").exists(timeout=20)
+
+        if user == "0":
+            await search()
+
+        else:
+            await like(user)
 
 
 asyncio.run(main())

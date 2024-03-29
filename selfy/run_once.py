@@ -12,8 +12,8 @@ devices = client.devices()
 
 def start_ui(client):
     d = u2.connect(client.serial)
-    # print(d.info)
-    d.shell("reboot")
+    print(d.info)
+    # d.shell("reboot")
 
 
 for client in devices:

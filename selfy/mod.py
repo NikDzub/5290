@@ -26,16 +26,16 @@ def split_list(li, segments):
 # search
 
 
-def get_users(segments):
+def get_users1(segments):
     # with open("./etc/username_list.txt") as f:
-    with open("./etc/new_user_list.txt") as f:
+    with open("../etc/new_user_list.txt") as f:
         username_list = []
         for line in f.readlines():
             username_list.append(line.replace("\n", ""))
         random.shuffle(username_list)
 
         top_users = []
-        with open("./etc/top_users.txt") as f:
+        with open("../etc/top_users.txt") as f:
             for line in f.readlines():
                 top_users.append(line.replace("\n", ""))
         random.shuffle(top_users)
@@ -44,6 +44,27 @@ def get_users(segments):
         for top in top_users:
             username_list.insert(0, top)
         return split_list(username_list, segments)
+
+
+def get_users(segments):
+    # with open("./etc/username_list.txt") as f:
+    with open("../etc/new_user_list.txt") as f:
+        username_list = []
+        for line in f.readlines():
+            username_list.append(line.replace("\n", ""))
+        random.shuffle(username_list)
+
+        top_users = []
+        with open("../etc/top_users.txt") as f:
+            for line in f.readlines():
+                top_users.append(line.replace("\n", ""))
+        random.shuffle(top_users)
+
+        top_users = top_users[:5]
+        for top in top_users:
+            username_list.insert(0, top)
+
+        return username_list
 
 
 def get_reply():

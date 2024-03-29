@@ -12,56 +12,63 @@ from colorama import Fore, Style
 
 n_new_videos = int(sys.argv[1])
 new_videos = []
+fam_users = mod.get_users(1)
 
 
 d1 = u2.connect("127.0.0.1:6555")
-d2 = u2.connect("127.0.0.1:6562")
-
-
-d2_users_output, exit_code = d2.shell("pm list users")
-d2_users = re.findall(r"UserInfo{(\d+):", d2_users_output)
+d1_users_output, exit_code = d1.shell("pm list users")
+d1_users = re.findall(r"UserInfo{(\d+):", d1_users_output)
 
 
 async def search():
-    print(
-        f"{Fore.BLUE}search - {Fore.LIGHTBLACK_EX}{datetime.now().strftime(f'%H:%M:%S')}{Style.RESET_ALL}"
-    )
-
     d1.app_start("com.github.uiautomator")
     d1(resourceId="com.github.uiautomator:id/start_uiautomator").click()
 
-    # go2 fyp -----------------------------------------------------------------
-    d1.open_url(f"https://vt.tiktok.com/")
+    d1.open_url(f"https://www.tiktok.com/@ihptto")
+    d1(text="Message").exists(timeout=10)
 
-    while len(new_videos) < n_new_videos:
+    for user in fam_users:
 
         try:
+
+            # go 2 usr -----------------------------------------------------------------
+            d1.open_url(f"https://www.tiktok.com/@{user}")
+            await asyncio.sleep(1)
+            d1(resourceId="com.zhiliaoapp.musically:id/cover").exists(timeout=10)
+            # print(f"{user} loaded")
+
+            # get n pins -----------------------------------------------------------------
+            d1.swipe_ext("up", scale=0.8)
+            n_pins = d1(text="Pinned").count
+            # print(f"pins : {n_pins}")
+
+            # go latest vid -----------------------------------------------------------------
+            d1(resourceId="com.zhiliaoapp.musically:id/cover")[n_pins].click()
+            d1(resourceId="com.zhiliaoapp.musically:id/title").exists(timeout=10)
             d1.press(62)
 
-            # filter -----------------------------------------------------------------
-            await asyncio.sleep(2)
-            is_live = d1(text="LIVE now").exists(timeout=1)
-            is_sponsor = d1(text="Sponsored").exists(timeout=1)
-
-            if is_live or is_sponsor:
-                # print("is live/sponsor")
-                d1.swipe_ext("up", scale=0.8)
-                continue
+            # n_ago = (
+            #     d1(resourceId="com.zhiliaoapp.musically:id/title")
+            #     .right(focusable="false", clickable="false")
+            #     .get_text()
+            # )
+            # print(f"ago : {n_ago}")
 
             # check n of comments -----------------------------------------------------------------
-
             d1(descriptionContains="Read or add comments").exists(timeout=10)
             n_comments_desc = d1(descriptionContains="Read or add comments").info[
                 "contentDescription"
             ]
             n_comments_filtered = re.sub("[^0-9]", "", n_comments_desc)
 
-            # print(f"comments : {int(n_comments_filtered)}")
+            if (
+                "K" in n_comments_desc
+                or int(n_comments_filtered) > 20
+                # or "ago" in n_ago
+                # or "m ago" in n_ago
+            ):
 
-            if int(n_comments_filtered) > 20:
-
-                # go2 video -----------------------------------------------------------------
-
+                # go2 comments -----------------------------------------------------------------
                 d1(descriptionContains="Read or add comments").click(timeout=10)
                 d1(descriptionContains="Like or undo like").exists(timeout=10)
 
@@ -76,7 +83,6 @@ async def search():
                 if new:
 
                     # get link from 1st comment -----------------------------------------------------------------
-
                     d1(text="Reply").left(
                         className="android.widget.TextView"
                     ).long_click(duration=5)
@@ -85,7 +91,8 @@ async def search():
                     d1(text="Send to friends").click(timeout=10)
 
                     d1(text="Copy link").exists(timeout=10)
-                    d1(text="Copy link").click(timeout=10)
+                    await asyncio.sleep(1)
+                    d1(text="Copy link").long_click(duration=1)
 
                     vid_link = d1(
                         textContains="https://vt.tiktok.com/",
@@ -95,7 +102,6 @@ async def search():
                     # print(vid_link)
 
                     # comment -----------------------------------------------------------------
-
                     comments_list = []
                     for i in range(2):
 
@@ -117,21 +123,23 @@ async def search():
                             # print(f"comment : {comment}")
                             d1(textContains="Add comment...").click(10)
                             d1(textContains="Add comment...").set_text(comment)
-                            d1(descriptionContains="Post comment").click(10)
+                            d1(descriptionContains="Post comment").click(timeout=10)
 
                     # reopen and get comment link -----------------------------------------------------------------
-
                     d1.app_stop(f"{mod.app_name}")
+                    await asyncio.sleep(5)
+
                     d1.open_url(f"https://www.tiktok.com/@ihptto")
                     d1(text="Message").exists(timeout=10)
 
                     d1.open_url(vid_link)
 
-                    d1(text="Reply").exists(timeout=10)
-                    await asyncio.sleep(1)
-                    d1(text="Reply")[1].left(
-                        className="android.widget.TextView"
-                    ).long_click(duration=5)
+                    d1(textContains="H2X7A").exists(timeout=10)
+                    bounds = d1(textContains="H2X7A").info["bounds"]
+
+                    d1.long_click(
+                        y=bounds["bottom"] + 10, x=bounds["right"], duration=3
+                    )
 
                     d1(text="Send to friends").exists(timeout=10)
                     d1(text="Send to friends").click(timeout=10)
@@ -146,61 +154,70 @@ async def search():
 
                     # print(like_link)
                     new_videos.append(like_link)
+
                     print(
-                        f"{Fore.LIGHTYELLOW_EX}{like_link}{Fore.LIGHTBLACK_EX}{datetime.now().strftime(f'%H:%M:%S')}{Style.RESET_ALL}"
+                        f"{Fore.LIGHTYELLOW_EX}{like_link} {Fore.LIGHTBLACK_EX}{datetime.now().strftime(f'%H:%M:%S')}{Style.RESET_ALL}"
                     )
 
-            d1.open_url(f"https://www.tiktok.com/")
-            d1.swipe_ext("up", scale=0.8)
-            # print("swipe next..")
+                    if len(new_videos) >= n_new_videos:
+                        break
 
         except Exception as error:
+            # print(error)
+
             d1.app_stop(f"{mod.app_name}")
-            # d.shell(f"am force-stop {mod.app_name}")
-            d1.open_url(f"https://www.tiktok.com/")
-            print(error)
+            d1.open_url(f"https://www.tiktok.com/@ihptto")
+            d1(text="Message").exists(timeout=10)
             pass
 
     d1.app_stop(f"{mod.app_name}")
-    # print(new_videos)
 
 
-async def like(id):
+async def like(user):
 
     print(
-        f"{Fore.LIGHTRED_EX}user {id} - {Fore.LIGHTBLACK_EX}{datetime.now().strftime(f'%H:%M:%S')}{Style.RESET_ALL}"
+        f"{Fore.LIGHTRED_EX}user {user} - {Fore.LIGHTBLACK_EX}{datetime.now().strftime(f'%H:%M:%S')}{Style.RESET_ALL}"
     )
 
-    if id == 0 or id == "0":
-
-        d2.app_start("com.github.uiautomator")
-        d2(resourceId="com.github.uiautomator:id/start_uiautomator").click()
-
     try:
-        d2.shell(f"am switch-user {id}")
-        await asyncio.sleep(2)
+        d1.open_url(f"https://www.tiktok.com/@ihptto")
+        d1(text="Message").exists(timeout=10)
 
-        d2(resourceId="com.android.systemui:id/clock").exists(timeout=20)
-
-        d2.open_url(f"https://www.tiktok.com/@ihptto")
-        d2(text="Message").exists(timeout=10)
+        replies = [
+            "Thanks for the gift!",
+            "OMG Guys google that code i got a giftcard",
+            "this is actualy works lol",
+        ]
 
         for video in new_videos:
-            d2.open_url(video)
-            d2(descriptionContains="Like or undo like").click(timeout=35)
-            # print("like")
+            d1.open_url(video)
+            d1(descriptionContains="Like or undo like").click(timeout=35)
             await asyncio.sleep(1)
-            d2.app_stop(f"{mod.app_name}")
+
+            d1(text="Reply").long_click(duration=1)
+            d1(textContains="Replying to").set_text(random.choice(replies))
+            d1(descriptionContains="Post comment").click(10)
+
+            d1.app_stop(f"{mod.app_name}")
 
     except Exception as error:
-        print(error)
+        # print(error)
         pass
 
 
 async def main():
-    await search()
-    for id in d2_users:
-        await like(id)
+
+    for user in d1_users:
+
+        d1.shell(f"am switch-user {user}")
+        await asyncio.sleep(2)
+        d1(resourceId="com.android.systemui:id/clock").exists(timeout=20)
+
+        if user == "0":
+            await search()
+
+        else:
+            await like(user)
 
 
 asyncio.run(main())
