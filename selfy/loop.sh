@@ -1,9 +1,15 @@
 #!/bin/bash
 
 while true; do
-    python3 selfie5.py 3 
+    python3 selfie6.py 3
     if [ $? -ne 0 ]; then
-        echo "failed, restarting..."
+        echo "selfie6.py failed, restarting..."
+        continue
+    fi
+
+    python3 M3.py 3 
+    if [ $? -ne 0 ]; then
+        echo "M3.py failed, restarting..."
         continue
     fi
     # break

@@ -171,7 +171,7 @@ actual_comment = "com.zhiliaoapp.musically:id/c6c"
 
 def get_new_vids():
     new_videos = []
-    with open("./etc/new_videos.txt", "r") as file:
+    with open("./new_videos.txt", "r") as file:
         lines = file.readlines()
         for line in lines:
             new_videos.append(line.replace("\n", ""))
@@ -179,8 +179,8 @@ def get_new_vids():
 
 
 def get_cookies(like_browsers):
-    if os.path.exists("./etc/cookies/.DS_Store"):
-        os.remove("./etc/cookies/.DS_Store")
-    cookies_json = os.listdir("./etc/cookies")
+    if os.path.exists("../etc/cookies/.DS_Store"):
+        os.remove("../etc/cookies/.DS_Store")
+    cookies_json = os.listdir("../etc/cookies")
     random.shuffle(cookies_json)
     return split_list(cookies_json[:15], like_browsers)
