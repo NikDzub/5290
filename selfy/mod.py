@@ -46,6 +46,17 @@ def get_users1(segments):
         return split_list(username_list, segments)
 
 
+def get_users_il():
+
+    with open("../etc/israel_usrs.txt") as f:
+        username_list = []
+        for line in f.readlines():
+            username_list.append(line.replace("\n", ""))
+        random.shuffle(username_list)
+
+        return username_list
+
+
 def get_users(segments):
     # with open("./etc/username_list.txt") as f:
     with open("../etc/new_user_list.txt") as f:

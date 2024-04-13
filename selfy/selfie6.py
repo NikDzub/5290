@@ -239,9 +239,12 @@ async def comment(user):
                     d1(descriptionContains="Post comment").click(timeout=10)
 
         d1.app_stop(f"{mod.app_name}")
+        d1.shell(f"adb shell pm disable-user {user}")
 
     except Exception as error:
         print(error)
+        d1.app_stop(f"{mod.app_name}")
+        d1.shell(f"adb shell pm disable-user {user}")
         pass
 
 
