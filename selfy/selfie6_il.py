@@ -44,6 +44,7 @@ async def search():
             user_names = []
 
             for i in range(100):
+                print(i)
                 d1.swipe(145, 380, 150, 100, 0.01)
                 await asyncio.sleep(1)
                 d1.swipe_ext("down", scale=0.5)
@@ -53,9 +54,14 @@ async def search():
                 #     name = user.get_text()
                 #     if name not in user_names:
                 #         user_names.append(name)
-                #         print(name)
 
-            for i in range(100):
+            # for user in user_names:
+            #     print(user)
+            #     d1.open_url(f"https://www.tiktok.com/@{user}")
+            #     d1(text="Followers").exists(timeout=1)
+
+            for i in range(200):
+                print(f"{i} {datetime.now().strftime(f'%H:%M:%S')}")
 
                 await asyncio.sleep(1)
                 d1.swipe_ext("down", scale=0)  # click on user
