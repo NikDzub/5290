@@ -36,7 +36,7 @@ let int = setInterval(() => {
       comment.innerHTML.includes('nina_girl_09') ||
       comment.innerHTML.includes('moilaridetise') ||
       comment.innerHTML.includes('keana_girl_09') ||
-      comment.innerHTML.includes('24er/7')
+      comment.innerHTML.includes('baby_jull6')
     ) {
       comment.setAttribute('class', 'target');
       comment.style.backgroundColor = 'blue';

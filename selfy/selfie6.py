@@ -26,6 +26,7 @@ async def search():
     d1(resourceId="com.github.uiautomator:id/start_uiautomator").click()
 
     d1.open_url(f"https://www.tiktok.com/@ihptto")
+
     d1(text="Message").exists(timeout=10)
 
     for user in fam_users:
@@ -263,6 +264,8 @@ async def main():
     with open("./new_videos.txt", "w") as outfile:
         for index, row in enumerate(new_videos):
             outfile.write(str(row) + "\n")
+
+    d1.shell(f"adb shell pm disable-user {user}")
 
 
 asyncio.run(main())

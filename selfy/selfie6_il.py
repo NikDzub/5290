@@ -41,18 +41,32 @@ async def search():
             d1(text="Follow").exists(timeout=10)
             # print("loadded followers")
 
+            user_names = []
+
             for i in range(100):
-                d1.swipe_ext("up", scale=0.5)
+                d1.swipe(145, 380, 150, 100, 0.01)
                 await asyncio.sleep(1)
-                d1.swipe_ext("up", scale=0)
+                d1.swipe_ext("down", scale=0.5)
+
+                # colection = d1(resourceId="com.zhiliaoapp.musically:id/oau")
+                # for user in colection:
+                #     name = user.get_text()
+                #     if name not in user_names:
+                #         user_names.append(name)
+                #         print(name)
+
+            for i in range(100):
+
+                await asyncio.sleep(1)
+                d1.swipe_ext("down", scale=0)  # click on user
                 await asyncio.sleep(1)
 
                 # in user
-
                 has_video = d1(resourceId="com.zhiliaoapp.musically:id/cover").exists(
                     timeout=5
                 )
                 if has_video:
+
                     d1(resourceId="com.zhiliaoapp.musically:id/cover").click()
                     d1.press(62)
                     await asyncio.sleep(1)
@@ -64,6 +78,7 @@ async def search():
 
                 d1(descriptionContains="Back to previous screen").click()
                 await asyncio.sleep(1)
+                d1.swipe_ext("down", scale=0.3)
 
         except Exception as error:
             print(error)
